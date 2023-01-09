@@ -17,10 +17,10 @@ class ApiResponseDto {
                 .body(data)
         }
 
-        fun <T> noContent(data: T): ResponseEntity<T> {
+        fun noContent(): ResponseEntity<Unit> {
             return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(data)
+                .build()
         }
     }
 }
