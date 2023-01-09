@@ -37,19 +37,19 @@ class TodoController(
     fun update(
         @Valid @RequestBody request: TodoRequestDto,
         @PathVariable todoId: Long
-    ) : ResponseEntity<TodoResponseDto> {
+    ): ResponseEntity<TodoResponseDto> {
         val response = todoService.update(request, todoId)
         return ApiResponseDto.ok(response)
     }
 
     @DeleteMapping("/todos/{todoId}")
-    fun delete(@PathVariable todoId: Long) : ResponseEntity<Unit> {
+    fun delete(@PathVariable todoId: Long): ResponseEntity<Unit> {
         todoService.delete(todoId)
         return ApiResponseDto.noContent()
     }
 
     @GetMapping("/todos/{todoId}")
-    fun getDetail(@PathVariable todoId: Long) : ResponseEntity<TodoResponseDto> {
+    fun getDetail(@PathVariable todoId: Long): ResponseEntity<TodoResponseDto> {
         val response = todoService.getDetail(todoId)
         return ApiResponseDto.ok(response)
     }
@@ -58,7 +58,7 @@ class TodoController(
     fun getPreview(
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "10") size: Int
-    ) : ResponseEntity<TodosResponseDto> {
+    ): ResponseEntity<TodosResponseDto> {
         val response = todoService.getPreview(page, size)
         return ApiResponseDto.ok(response)
     }
@@ -66,13 +66,13 @@ class TodoController(
     @GetMapping("/todos")
     fun searchByDate(
         @ValidDateTimeFormat time: String
-    ) : ResponseEntity<TodosResponseDto> {
+    ): ResponseEntity<TodosResponseDto> {
         val response = todoService.searchByDate(time)
         return ApiResponseDto.ok(response)
     }
 
     @PatchMapping("/todos")
-    fun updateStatus(@RequestParam status: Status) : ResponseEntity<Unit> {
+    fun updateStatus(@RequestParam status: Status): ResponseEntity<Unit> {
         val response = todoService.updatestatus(status)
         return ApiResponseDto.noContent()
     }
