@@ -1,12 +1,14 @@
 package com.example.todo.controller
 
-import com.example.todo.common.ApiResponseDto
+import com.example.todo.common.response.ApiResponseDto
 import com.example.todo.common.annotation.ValidDateTimeFormat
+import com.example.todo.common.response.PageResponseDto
 import com.example.todo.domain.enum.Status
 import com.example.todo.dto.TodoRequestDto
 import com.example.todo.dto.TodoResponseDto
 import com.example.todo.dto.TodosResponseDto
 import com.example.todo.service.TodoService
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -58,22 +60,26 @@ class TodoController(
     fun getPreview(
         @RequestParam(defaultValue = "1") page: Int,
         @RequestParam(defaultValue = "10") size: Int
-    ): ResponseEntity<TodosResponseDto> {
-        val response = todoService.getPreview(page, size)
-        return ApiResponseDto.ok(response)
+    ): ResponseEntity<PageResponseDto<TodoResponseDto>> {
+        val pageable = PageRequest.of(page, size)
+        val response = todoService.getPreview(pageable)
+        return ApiResponseDto.ok(PageResponseDto(response))
     }
 
     @GetMapping("/todos")
     fun searchByDate(
-        @ValidDateTimeFormat time: String
+        @ValidDateTimeFormat date: String
     ): ResponseEntity<TodosResponseDto> {
-        val response = todoService.searchByDate(time)
+        val response = todoService.searchByDate(date)
         return ApiResponseDto.ok(response)
     }
 
-    @PatchMapping("/todos")
-    fun updateStatus(@RequestParam status: Status): ResponseEntity<Unit> {
-        val response = todoService.updatestatus(status)
+    @PatchMapping("/todos/{todoId}")
+    fun updateStatus(
+        @PathVariable todoId: Long,
+        @RequestParam status: Status
+    ): ResponseEntity<Unit> {
+        todoService.updateStatus(todoId, status)
         return ApiResponseDto.noContent()
     }
 }
