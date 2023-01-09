@@ -6,7 +6,6 @@ import com.example.todo.common.response.PageResponseDto
 import com.example.todo.domain.enum.Status
 import com.example.todo.dto.TodoRequestDto
 import com.example.todo.dto.TodoResponseDto
-import com.example.todo.dto.TodosResponseDto
 import com.example.todo.service.TodoService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
@@ -68,10 +67,12 @@ class TodoController(
 
     @GetMapping("/todos")
     fun searchByDate(
-        @ValidDateTimeFormat date: String
-    ): ResponseEntity<TodosResponseDto> {
+        @ValidDateTimeFormat date: String,
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): ResponseEntity<PageResponseDto<TodoResponseDto>> {
         val response = todoService.searchByDate(date)
-        return ApiResponseDto.ok(response)
+        return ApiResponseDto.ok(PageResponseDto(response))
     }
 
     @PatchMapping("/todos/{todoId}")
