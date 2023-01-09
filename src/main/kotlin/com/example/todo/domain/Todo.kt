@@ -16,4 +16,13 @@ class Todo (
 
     @Enumerated(EnumType.STRING)
     var status: Status
-) : BaseTimeEntity()
+) : BaseTimeEntity() {
+    fun updateInfo(title: String, content: String) {
+        this.title = title
+        this.content = content
+    }
+
+    fun updateStatus(status: Status) {
+        this.status = status
+    }
+}
