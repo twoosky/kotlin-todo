@@ -1,4 +1,4 @@
-package com.example.todo.common
+package com.example.todo.common.response
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
