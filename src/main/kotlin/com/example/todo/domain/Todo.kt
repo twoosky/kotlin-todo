@@ -8,12 +8,12 @@ import javax.persistence.*
 class Todo (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long,
+    val id: Long? = 0,
 
-    val title: String,
+    var title: String,
 
-    val content: String,
+    var content: String,
 
     @Enumerated(EnumType.STRING)
-    val status: Status
+    var status: Status
 ) : BaseTimeEntity()
