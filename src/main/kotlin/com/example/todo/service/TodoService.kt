@@ -1,5 +1,7 @@
 package com.example.todo.service
 
+import com.example.todo.common.exception.ErrorCode
+import com.example.todo.common.exception.TodoNotFoundException
 import com.example.todo.domain.Todo
 import com.example.todo.domain.enum.Status
 import com.example.todo.dto.TodoRequestDto
@@ -37,7 +39,7 @@ class TodoService(
     @Transactional
     fun update(request: TodoRequestDto, todoId: Long): TodoResponseDto {
         val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw RuntimeException()
+            ?: throw TodoNotFoundException(ErrorCode.NOT_FOUND_TODO)
         todo.updateInfo(request.title, request.content)
         todoRepository.saveAndFlush(todo)
         return TodoResponseDto(todo)
@@ -51,7 +53,7 @@ class TodoService(
     @Transactional(readOnly = true)
     fun getDetail(todoId: Long): TodoResponseDto {
         val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw RuntimeException()
+            ?: throw TodoNotFoundException(ErrorCode.NOT_FOUND_TODO)
         return TodoResponseDto(todo)
     }
 
@@ -75,7 +77,7 @@ class TodoService(
     @Transactional
     fun updateStatus(todoId: Long, status: Status) {
         val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw RuntimeException()
+            ?: throw TodoNotFoundException(ErrorCode.NOT_FOUND_TODO)
         todo.updateStatus(status)
     }
 }
