@@ -37,7 +37,7 @@ class TodoService(
     @Transactional
     fun update(request: TodoRequestDto, todoId: Long): TodoResponseDto {
         val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw IllegalArgumentException()
+            ?: throw RuntimeException()
         todo.updateInfo(request.title, request.content)
         todoRepository.saveAndFlush(todo)
         return TodoResponseDto(todo)
@@ -51,7 +51,7 @@ class TodoService(
     @Transactional(readOnly = true)
     fun getDetail(todoId: Long): TodoResponseDto {
         val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw IllegalArgumentException()
+            ?: throw RuntimeException()
         return TodoResponseDto(todo)
     }
 
@@ -75,7 +75,7 @@ class TodoService(
     @Transactional
     fun updateStatus(todoId: Long, status: Status) {
         val todo = todoRepository.findByIdOrNull(todoId)
-            ?: throw IllegalArgumentException()
+            ?: throw RuntimeException()
         todo.updateStatus(status)
     }
 }
