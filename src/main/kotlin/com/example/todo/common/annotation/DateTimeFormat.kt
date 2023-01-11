@@ -11,8 +11,8 @@ import kotlin.reflect.KClass
     AnnotationTarget.VALUE_PARAMETER
 )
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ValidDateTimeFormat(
-    val pattern: String = "yyyy-MM-dd HH:mm:ss",
+annotation class DateTimeFormat(
+    val pattern: String = "yyyy-MM-dd",
     val message: String = "시간 형식이 유효하지 않습니다",
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = []

@@ -6,10 +6,15 @@ import com.example.todo.dto.TodoRequestDto
 import com.example.todo.dto.TodoResponseDto
 import com.example.todo.repository.TodoRepository
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Service
 class TodoService(
@@ -57,8 +62,14 @@ class TodoService(
     }
 
     @Transactional(readOnly = true)
-    fun searchByDate(date: String) {
+    fun searchByDate(page: Int, size: Int, date: String): Page<TodoResponseDto> {
+        val searchDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        val start = searchDate.atStartOfDay()
+        val end = LocalDateTime.of(searchDate, LocalTime.of(23, 59, 59))
+        val pageable = PageRequest.of(page, size)
 
+        return todoRepository.findAllByCreatedAtBetween(pageable, start, end)
+            .map { TodoResponseDto(it) }
     }
 
     @Transactional

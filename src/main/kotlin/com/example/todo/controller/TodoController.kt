@@ -1,7 +1,7 @@
 package com.example.todo.controller
 
 import com.example.todo.common.response.ApiResponseDto
-import com.example.todo.common.annotation.ValidDateTimeFormat
+import com.example.todo.common.annotation.DateTimeFormat
 import com.example.todo.common.response.PageResponseDto
 import com.example.todo.domain.enum.Status
 import com.example.todo.dto.TodoRequestDto
@@ -9,23 +9,16 @@ import com.example.todo.dto.TodoResponseDto
 import com.example.todo.service.TodoService
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.*
 import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/v1")
+@Validated
 class TodoController(
     private val todoService: TodoService
 ) {
-
     @PostMapping("/todos")
     fun generate(
         @Valid @RequestBody request: TodoRequestDto
@@ -57,7 +50,7 @@ class TodoController(
 
     @GetMapping("/todos")
     fun getPreview(
-        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
     ): ResponseEntity<PageResponseDto<TodoResponseDto>> {
         val pageable = PageRequest.of(page, size)
@@ -65,22 +58,22 @@ class TodoController(
         return ApiResponseDto.ok(PageResponseDto(response))
     }
 
-    @GetMapping("/todos")
+    @GetMapping("/todos/search")
     fun searchByDate(
-        @ValidDateTimeFormat date: String,
-        @RequestParam(defaultValue = "1") page: Int,
+        @DateTimeFormat("yyyy-MM-dd") @RequestParam date: String,
+        @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
     ): ResponseEntity<PageResponseDto<TodoResponseDto>> {
-        val response = todoService.searchByDate(date)
+        val response = todoService.searchByDate(page, size, date)
         return ApiResponseDto.ok(PageResponseDto(response))
     }
 
-    @PatchMapping("/todos/{todoId}")
+    @PatchMapping("/todos/{todoId}/status")
     fun updateStatus(
         @PathVariable todoId: Long,
-        @RequestParam status: Status
+        @RequestParam type: Status
     ): ResponseEntity<Unit> {
-        todoService.updateStatus(todoId, status)
+        todoService.updateStatus(todoId, type)
         return ApiResponseDto.noContent()
     }
 }
