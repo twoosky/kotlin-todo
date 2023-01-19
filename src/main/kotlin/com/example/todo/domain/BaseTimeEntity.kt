@@ -1,28 +1,15 @@
 package com.example.todo.domain
 
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
 import java.time.LocalDateTime
-import javax.persistence.Column
 import javax.persistence.MappedSuperclass
-import javax.persistence.PostPersist
-import javax.persistence.PrePersist
 
 @MappedSuperclass
-open class BaseTimeEntity (
-    @field:Column(name = "created_at")
-    var createdAt: LocalDateTime? = null,
+open class BaseTimeEntity(
+    @CreatedDate
+    val createdAt: LocalDateTime = LocalDateTime.now(),
 
-    @field:Column(name = "modified_at")
-    var modified_at: LocalDateTime? = null
-) {
-    @PrePersist
-    fun onCreate() {
-        this.createdAt = LocalDateTime.now()
-        this.modified_at = createdAt
-    }
-
-    @PostPersist
-    fun onModify() {
-        this.modified_at = LocalDateTime.now()
-    }
-
-}
+    @LastModifiedDate
+    val modifiedAt: LocalDateTime = LocalDateTime.now()
+)

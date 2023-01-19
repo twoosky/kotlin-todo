@@ -19,6 +19,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @Service
+@Transactional(readOnly = true)
 class TodoService(
     private val todoRepository: TodoRepository
 ) {
@@ -38,32 +39,34 @@ class TodoService(
 
     @Transactional
     fun update(request: TodoRequestDto, todoId: Long): TodoResponseDto {
-        val todo = todoRepository.findByIdOrNull(todoId)
+        val oldTodo = todoRepository.findByIdOrNull(todoId)
             ?: throw TodoNotFoundException(ErrorCode.NOT_FOUND_TODO)
-        todo.updateInfo(request.title, request.content)
-        todoRepository.saveAndFlush(todo)
-        return TodoResponseDto(todo)
+        val todo = Todo(
+            id = oldTodo.id,
+            title = request.title,
+            content = request.content,
+            status = oldTodo.status
+        )
+        val newTodo = todoRepository.saveAndFlush(todo)
+
+        return TodoResponseDto(newTodo)
     }
 
-    @Transactional
     fun delete(todoId: Long) {
         todoRepository.deleteById(todoId)
     }
 
-    @Transactional(readOnly = true)
     fun getDetail(todoId: Long): TodoResponseDto {
         val todo = todoRepository.findByIdOrNull(todoId)
             ?: throw TodoNotFoundException(ErrorCode.NOT_FOUND_TODO)
         return TodoResponseDto(todo)
     }
 
-    @Transactional(readOnly = true)
     fun getPreview(pageable: Pageable): Page<TodoResponseDto> {
         return todoRepository.findAll(pageable)
             .map { TodoResponseDto(it) }
     }
 
-    @Transactional(readOnly = true)
     fun searchByDate(page: Int, size: Int, date: String): Page<TodoResponseDto> {
         val searchDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         val start = searchDate.atStartOfDay()
@@ -74,10 +77,15 @@ class TodoService(
             .map { TodoResponseDto(it) }
     }
 
-    @Transactional
     fun updateStatus(todoId: Long, status: Status) {
-        val todo = todoRepository.findByIdOrNull(todoId)
+        val oldTodo = todoRepository.findByIdOrNull(todoId)
             ?: throw TodoNotFoundException(ErrorCode.NOT_FOUND_TODO)
-        todo.updateStatus(status)
+        val todo = Todo(
+            id = oldTodo.id,
+            title = oldTodo.title,
+            content =  oldTodo.content,
+            status = status
+        )
+        todoRepository.save(todo)
     }
 }

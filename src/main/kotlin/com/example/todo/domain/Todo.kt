@@ -10,19 +10,10 @@ class Todo (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = 0,
 
-    var title: String,
+    val title: String,
 
-    var content: String,
+    val content: String,
 
     @Enumerated(EnumType.STRING)
-    var status: Status
-) : BaseTimeEntity() {
-    fun updateInfo(title: String, content: String) {
-        this.title = title
-        this.content = content
-    }
-
-    fun updateStatus(status: Status) {
-        this.status = status
-    }
-}
+    val status: Status
+) : BaseTimeEntity()
